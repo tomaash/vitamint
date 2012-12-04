@@ -1,57 +1,26 @@
 package cz.netmail.vitamint.service;
 
+import java.lang.reflect.Type;
+import java.util.Collection;
+
 import org.apache.http.impl.client.DefaultHttpClient;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import cz.netmail.vitamint.model.Article;
+import cz.netmail.vitamint.model.Chapter;
+import cz.netmail.vitamint.model.Country;
 
 public class DataService {
 	
-//	public static DataService inst = new DataService();
-	
 	public static DefaultHttpClient client = new DefaultHttpClient();
-
-//	public String token;
-//	
-//	public void run(Intent intent) {
-//		new GetCookieTask().execute(intent);
-//	}
-//
-//	private class GetCookieTask extends AsyncTask<Intent,Void,Boolean> {
-//		private Intent intent;
-//		protected Boolean doInBackground(Intent... intents) {
-//			try {
-//				// Don't follow redirects
-//				intent = intents[0];
-//				http_client.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
-//				String url = "https://oauth-demo-netmail.appspot.com/_ah/login?continue=http://localhost/&auth=" + token;
-////				Log.e("debug", url);
-//				HttpGet http_get = new HttpGet(url);
-//				HttpResponse response;
-//				response = http_client.execute(http_get);
-//				if(response.getStatusLine().getStatusCode() != 302)
-//					// Response should be a redirect
-//					return false;
-//
-//				for(Cookie cookie : http_client.getCookieStore().getCookies()) {
-////					Log.e("debug-cookie", cookie.getName());
-////					Log.e("debug-cookie", cookie.getValue());
-//					if(cookie.getName().equals("SACSID"))
-//						return true;
-//				}
-//			} catch (ClientProtocolException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} finally {
-//				http_client.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, true);
-//			}
-//			return false;
-//		}
-//
-//		protected void onPostExecute(Boolean result) {
-//			nextTask.execute();
-//		}
-
-//	}	
+	public static Gson gson = new Gson();
+	
+	public static Type ChapterCollectionType = new TypeToken<Collection<Chapter>>(){}.getType();
+	public static Type CountryCollectionType = new TypeToken<Collection<Country>>(){}.getType();
+	public static Type ArticleCollectionType = new TypeToken<Collection<Article>>(){}.getType();
+	
+	public static Collection<Article> articles;
 
 }

@@ -124,33 +124,33 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	@Override
 	protected void onResume() {
 		super.onResume();
-		new LoadArticlesTask().execute();
+//		new LoadArticlesTask().execute();
 	}
 
 		
-	private class LoadArticlesTask extends AsyncTask<Void,Void,Collection<Article>> {
-		@Override
-		protected Collection<Article> doInBackground(Void... nil) {
-			try {
-				String url = "https://oauth-demo-netmail.appspot.com/api/articles";
-				HttpGet http_get = new HttpGet(url);
-				HttpResponse result = DataService.client.execute(http_get);
-				String data = EntityUtils.toString(result.getEntity());
-				Collection<Article> articles = gson.fromJson(data, ArticleCollectionType);
-				return articles;
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		protected void onPostExecute(Collection<Article> result) {
-				Log.e("data", result.toString());
-				Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_LONG).show();                          
-		}
-	}
+//	private class LoadArticlesTask extends AsyncTask<Void,Void,Collection<Article>> {
+//		@Override
+//		protected Collection<Article> doInBackground(Void... nil) {
+//			try {
+//				String url = "https://oauth-demo-netmail.appspot.com/api/articles";
+//				HttpGet http_get = new HttpGet(url);
+//				HttpResponse result = DataService.client.execute(http_get);
+//				String data = EntityUtils.toString(result.getEntity());
+//				Collection<Article> articles = gson.fromJson(data, ArticleCollectionType);
+//				return articles;
+//			} catch (ClientProtocolException e) {
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//			return null;
+//		}
+//
+//		protected void onPostExecute(Collection<Article> result) {
+//				Log.e("data", result.toString());
+//				Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_LONG).show();                          
+//		}
+//	}
 
 
 	public void onItemSelected(String id) {

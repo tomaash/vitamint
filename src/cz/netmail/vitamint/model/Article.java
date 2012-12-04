@@ -10,6 +10,7 @@ public class Article {
     
     public String cover_url;
     public String teaser;
+    public String description;
     public String title;
     public String order;
     
