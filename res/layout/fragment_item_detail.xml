@@ -1,4 +1,5 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+ <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_detail"
     style="?android:attr/textAppearanceLarge"
@@ -6,3 +7,38 @@
     android:layout_height="match_parent"
     android:padding="16dp"
     tools:context=".ItemDetailFragment" />
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/item_title"
+            style="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            tools:context=".ItemDetailFragment" />
+        <ImageView 
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerInside"
+			android:id="@+id/item_image"
+            />
+
+        <TextView
+            android:id="@+id/item_detail"
+            style="?android:attr/textAppearanceMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            tools:context=".ItemDetailFragment" />
+    </LinearLayout>
+
+</ScrollView>

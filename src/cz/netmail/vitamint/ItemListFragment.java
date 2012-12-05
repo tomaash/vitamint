@@ -14,13 +14,11 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
-import cz.netmail.vitamint.dummy.DummyContent;
+import cz.netmail.vitamint.component.ImageSimpleAdapter;
 import cz.netmail.vitamint.model.Article;
 import cz.netmail.vitamint.service.DataService;
 
@@ -90,15 +88,8 @@ public class ItemListFragment extends ListFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		parentFragment = this;
-		//        String sectionName = getArguments().getString(ARG_SECTION_NAME);
-		//        List<DummyItem> myItems = new ArrayList<DummyContent.DummyItem>();
-		//        for (DummyItem item : DummyContent.ITEMS) {
-		//        	DummyItem dummyItem = new DummyItem(item.id, item.content + " " + sectionName);
-		//        	myItems.add(dummyItem);
-		//        }
 
 		new LoadArticlesTask().execute();
-		// TODO: replace with a real list adapter.
 	}
 
 
@@ -135,15 +126,17 @@ public class ItemListFragment extends ListFragment {
 			for (Article article : result) {
 				HashMap<String, String> map = new HashMap<String, String>();
 				map.put("title", article.title);
+				map.put("teaser", article.teaser);
+				map.put("image", DataService.SERVER_URL + article.cover_url);
 				listData.add(map);
 			}
 
-			ListAdapter adapter = new SimpleAdapter(
+			ListAdapter adapter = new ImageSimpleAdapter(
 					getActivity(),
 					listData,
-					android.R.layout.simple_list_item_activated_1,
-					new String[] {"title"},
-					new int[]{android.R.id.text1}); 
+					R.layout.list_item_image,
+					new String[] {"title","teaser","image"},
+					new int[]{R.id.list_title,R.id.list_teaser,R.id.list_image}); 
 
 			setListAdapter(adapter);
 		}

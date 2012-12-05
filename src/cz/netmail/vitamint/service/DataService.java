@@ -14,8 +14,12 @@ import cz.netmail.vitamint.model.Country;
 
 public class DataService {
 	
+	public static final String SERVER_URL = "https://oauth-demo-netmail.appspot.com";
+	
 	public static DefaultHttpClient client = new DefaultHttpClient();
 	public static Gson gson = new Gson();
+	
+	
 	
 	public static Type ChapterCollectionType = new TypeToken<Collection<Chapter>>(){}.getType();
 	public static Type CountryCollectionType = new TypeToken<Collection<Country>>(){}.getType();

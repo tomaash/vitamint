@@ -5,9 +5,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import cz.netmail.vitamint.dummy.DummyContent;
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
+
 import cz.netmail.vitamint.model.Article;
 import cz.netmail.vitamint.service.DataService;
 
@@ -59,6 +61,14 @@ public class ItemDetailFragment extends Fragment {
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
             ((TextView) rootView.findViewById(R.id.item_detail)).setText(mItem.description);
+            ((TextView) rootView.findViewById(R.id.item_title)).setText(mItem.title);
+            
+            ImageView iv = (ImageView)rootView.findViewById(R.id.item_image);
+            
+            Article item = mItem;
+            String url = DataService.SERVER_URL + mItem.cover_url;
+            
+            UrlImageViewHelper.setUrlDrawable(iv, url, R.drawable.loading, null);
         }
 
         return rootView;
