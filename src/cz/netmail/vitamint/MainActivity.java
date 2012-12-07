@@ -56,7 +56,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	ViewPager mViewPager;
 
 	DefaultHttpClient http_client = new DefaultHttpClient();
-	
+
 	private Gson gson = new Gson();
 	Type ChapterCollectionType = new TypeToken<Collection<Chapter>>(){}.getType();
 	Type CountryCollectionType = new TypeToken<Collection<Country>>(){}.getType();
@@ -69,20 +69,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		//MASTERDETAIL STUFF
-		if (findViewById(R.id.item_detail_container) != null) {
-			// The detail container view will be present only in the
-			// large-screen layouts (res/values-large and
-			// res/values-sw600dp). If this view is present, then the
-			// activity should be in two-pane mode.
-			mTwoPane = true;
 
-			// In two-pane mode, list items should be given the
-			// 'activated' state when touched.
-			((ItemListFragment) getSupportFragmentManager()
-					.findFragmentById(R.id.item_list))
-					.setActivateOnItemClick(true);
-		}
 
 
 		// Set up the action bar.
@@ -118,40 +105,32 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
 		}
+
+
+		//MASTERDETAIL STUFF
+		if (findViewById(R.id.item_detail_container) != null) {
+			// The detail container view will be present only in the
+			// large-screen layouts (res/values-large and
+			// res/values-sw600dp). If this view is present, then the
+			// activity should be in two-pane mode.
+			mTwoPane = true;
+
+			// In two-pane mode, list items should be given the
+			// 'activated' state when touched.
+
+//			((ItemListFragment) getSupportFragmentManager()
+//					.findFragmentById(R.id.item_list))
+					
+		}
+
+
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onResume() {
 		super.onResume();
-//		new LoadArticlesTask().execute();
 	}
-
-		
-//	private class LoadArticlesTask extends AsyncTask<Void,Void,Collection<Article>> {
-//		@Override
-//		protected Collection<Article> doInBackground(Void... nil) {
-//			try {
-//				String url = "https://oauth-demo-netmail.appspot.com/api/articles";
-//				HttpGet http_get = new HttpGet(url);
-//				HttpResponse result = DataService.client.execute(http_get);
-//				String data = EntityUtils.toString(result.getEntity());
-//				Collection<Article> articles = gson.fromJson(data, ArticleCollectionType);
-//				return articles;
-//			} catch (ClientProtocolException e) {
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//			return null;
-//		}
-//
-//		protected void onPostExecute(Collection<Article> result) {
-//				Log.e("data", result.toString());
-//				Toast.makeText(getApplicationContext(), result.toString(), Toast.LENGTH_LONG).show();                          
-//		}
-//	}
-
 
 	public void onItemSelected(String id) {
 		if (mTwoPane) {
@@ -222,18 +201,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		@Override
 		public Fragment getItem(int position) {
 			// getItem is called to instantiate the fragment for the given page.
-			// Return a DummySectionFragment (defined as a static inner class
-			// below) with the page number as its lone argument.
-
-			//        	Fragment fragment = new DummySectionFragment();
-			//            Bundle args = new Bundle();
-			//            args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, position + 1);
-			//            fragment.setArguments(args);
-			//            return fragment;
 
 			Fragment fragment = new ItemListFragment();
+			((ItemListFragment)fragment).mTwoPane = mTwoPane;
+//				setActivateOnItemClick(true);
+			
 			Bundle args = new Bundle();
-			args.putString(DummySectionFragment.ARG_SECTION_NAME, getPageTitle(position).toString());
+			args.putString(ItemListFragment.ARG_SECTION_NAME, getPageTitle(position).toString());
 			fragment.setArguments(args);
 			return fragment;
 
@@ -258,32 +232,4 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			return null;
 		}
 	}
-
-	/**
-	 * A dummy fragment representing a section of the app, but that simply
-	 * displays dummy text.
-	 */
-	public static class DummySectionFragment extends Fragment {
-		/**
-		 * The fragment argument representing the section number for this
-		 * fragment.
-		 */
-		public static final String ARG_SECTION_NUMBER = "section_number";
-		public static final String ARG_SECTION_NAME = "section_name";
-
-		public DummySectionFragment() {
-		}
-
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container,
-				Bundle savedInstanceState) {
-			// Create a new TextView and set its text to the fragment's section
-			// number argument value.
-			TextView textView = new TextView(getActivity());
-			textView.setGravity(Gravity.CENTER);
-			textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
-			return textView;
-		}
-	}
-
 }

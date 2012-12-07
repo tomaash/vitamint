@@ -1,6 +1,7 @@
 package cz.netmail.vitamint.service;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -19,12 +20,12 @@ public class DataService {
 	public static DefaultHttpClient client = new DefaultHttpClient();
 	public static Gson gson = new Gson();
 	
-	
-	
 	public static Type ChapterCollectionType = new TypeToken<Collection<Chapter>>(){}.getType();
 	public static Type CountryCollectionType = new TypeToken<Collection<Country>>(){}.getType();
 	public static Type ArticleCollectionType = new TypeToken<Collection<Article>>(){}.getType();
 	
 	public static Collection<Article> articles;
+	public static ArrayList<Chapter> chapters;
+	public static ArrayList<Country> countries;
 
 }

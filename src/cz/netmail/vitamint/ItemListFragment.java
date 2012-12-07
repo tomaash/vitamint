@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -14,12 +15,15 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 import cz.netmail.vitamint.component.ImageSimpleAdapter;
 import cz.netmail.vitamint.model.Article;
+import cz.netmail.vitamint.model.Chapter;
+import cz.netmail.vitamint.model.Country;
 import cz.netmail.vitamint.service.DataService;
 
 /**
@@ -38,7 +42,11 @@ public class ItemListFragment extends ListFragment {
 	 * activated item position. Only used on tablets.
 	 */
 	private static final String STATE_ACTIVATED_POSITION = "activated_position";
-	//    public static final String ARG_SECTION_NAME = "section_name";
+	private static final String STATE_TWO_PANE = "two_pane";
+
+	public static final String ARG_SECTION_NAME = "section_name";
+
+	public boolean mTwoPane = false;
 	//    public static final String ARG_ARTICLES = "articles";
 
 
@@ -118,17 +126,55 @@ public class ItemListFragment extends ListFragment {
 				Toast.makeText(getActivity().getApplicationContext(), "No articles for this account", Toast.LENGTH_LONG).show();
 				return;
 			}
-			
+
 			DataService.articles = result;
 
 			ArrayList<HashMap<String, String>> listData = new ArrayList<HashMap<String, String>>();
+			HashMap<String, Chapter> chapterData = new HashMap<String, Chapter>();
+			HashMap<String, Country> countryData = new HashMap<String, Country>();
+			DataService.countries = new ArrayList<Country>();
+			DataService.chapters = new ArrayList<Chapter>();
 
 			for (Article article : result) {
+//				Log.e("chapter", article.chapter);
+//				Log.e("title", article.title);
+				if (chapterData.containsKey(article.chapter)) {
+					chapterData.get(article.chapter).articlesCollection.add(article);
+				} else {
+					Chapter chapter = new Chapter();
+					chapter.id = article.chapter;
+					chapter.articlesCollection = new ArrayList<Article>();
+					chapter.articlesCollection.add(article);
+					chapterData.put(article.chapter, chapter);
+				}
+				
+				for (String countryCode : article.countries) {
+					if (countryData.containsKey(countryCode)) {
+						countryData.get(countryCode).articlesCollection.add(article);
+					} else {
+						Country country = new Country();
+						country.id = countryCode;
+						country.articlesCollection = new ArrayList<Article>();
+						country.articlesCollection.add(article);
+						countryData.put(countryCode, country);
+					}
+				}
+				
 				HashMap<String, String> map = new HashMap<String, String>();
 				map.put("title", article.title);
 				map.put("teaser", article.teaser);
 				map.put("image", DataService.SERVER_URL + article.cover_url);
 				listData.add(map);
+			}
+			
+			for (Country country : countryData.values()) {
+//				Log.e("country", country.id);
+				DataService.countries.add(country);
+			}
+			
+			for (Chapter chapter : chapterData.values()) {
+				Log.e("chapter", chapter.id);
+				DataService.chapters.add(chapter);
 			}
 
 			ListAdapter adapter = new ImageSimpleAdapter(
@@ -147,10 +193,24 @@ public class ItemListFragment extends ListFragment {
 		super.onViewCreated(view, savedInstanceState);
 
 		// Restore the previously serialized activated item position.
-		if (savedInstanceState != null
-				&& savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-			setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
+		if (mTwoPane) setActivateOnItemClick(true);
+		
+		if (savedInstanceState != null) {
+			
+			
+			if (savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
+				int position = savedInstanceState.getInt(STATE_ACTIVATED_POSITION);
+				setActivatedPosition(position);
+				mCallbacks.onItemSelected(""+position);
+			}
+
+			if (savedInstanceState.containsKey(STATE_TWO_PANE)) {
+				mTwoPane = savedInstanceState.getBoolean(STATE_TWO_PANE);
+				setActivateOnItemClick(mTwoPane);	
+			}
+
 		}
+
 	}
 
 	@Override
@@ -185,9 +245,13 @@ public class ItemListFragment extends ListFragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
+		
+		outState.putBoolean(STATE_TWO_PANE, mTwoPane);
+		
 		if (mActivatedPosition != ListView.INVALID_POSITION) {
 			// Serialize and persist the activated item position.
 			outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
+			
 		}
 	}
 
