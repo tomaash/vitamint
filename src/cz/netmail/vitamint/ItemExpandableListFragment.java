@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -12,15 +11,21 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
+import android.app.ListFragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ListAdapter;
+import android.view.ViewGroup;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
-import cz.netmail.vitamint.component.ImageSimpleAdapter;
+import cz.netmail.vitamint.ItemListFragment.Callbacks;
+import cz.netmail.vitamint.component.ExpandListAdapter;
 import cz.netmail.vitamint.model.Article;
 import cz.netmail.vitamint.model.Chapter;
 import cz.netmail.vitamint.model.Country;
@@ -36,7 +41,7 @@ import cz.netmail.vitamint.service.DataService;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class ItemListFragment extends ListFragment {
+public class ItemExpandableListFragment extends Fragment {
 
 	/**
 	 * The serialization (saved instance state) Bundle key representing the
@@ -55,7 +60,7 @@ public class ItemListFragment extends ListFragment {
 	 * The fragment's current callback object, which is notified of list item
 	 * clicks.
 	 */
-	private Callbacks mCallbacks = sDummyCallbacks;
+//	private Callbacks mCallbacks = sDummyCallbacks;
 
 	/**
 	 * The current activated item position. Only used on tablets.
@@ -64,43 +69,27 @@ public class ItemListFragment extends ListFragment {
 
 	private ListFragment parentFragment;
 
-	/**
-	 * A callback interface that all activities containing this fragment must
-	 * implement. This mechanism allows activities to be notified of item
-	 * selections.
-	 */
-	public interface Callbacks {
-		/**
-		 * Callback for when an item has been selected.
-		 */
-		public void onItemSelected(String id);
+
+	public ItemExpandableListFragment() {
 	}
 
-	/**
-	 * A dummy implementation of the {@link Callbacks} interface that does
-	 * nothing. Used only when this fragment is not attached to an activity.
-	 */
-	private static Callbacks sDummyCallbacks = new Callbacks() {
-		@Override
-		public void onItemSelected(String id) {
-		}
-	};
-
-	/**
-	 * Mandatory empty constructor for the fragment manager to instantiate the
-	 * fragment (e.g. upon screen orientation changes).
-	 */
-	public ItemListFragment() {
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View v = inflater.inflate(R.layout.expandable_main, container, false);
+		return v;
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		parentFragment = this;
-
-		new LoadArticlesTask().execute();
 	}
-
+	
+	@Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        new LoadArticlesTask().execute();
+    }
 
 	private class LoadArticlesTask extends AsyncTask<Void,Void,Collection<Article>> {
 		@Override
@@ -137,18 +126,19 @@ public class ItemListFragment extends ListFragment {
 			DataService.chapters = new ArrayList<ExpandableDataProvider>();
 
 			for (Article article : result) {
-//				Log.e("chapter", article.chapter);
-//				Log.e("title", article.title);
+				//				Log.e("chapter", article.chapter);
+				//				Log.e("title", article.title);
 				if (chapterData.containsKey(article.chapter)) {
 					chapterData.get(article.chapter).articlesCollection.add(article);
 				} else {
 					Chapter chapter = new Chapter();
 					chapter.id = article.chapter;
+					chapter.name = article.chapter;
 					chapter.articlesCollection = new ArrayList<Article>();
 					chapter.articlesCollection.add(article);
 					chapterData.put(article.chapter, chapter);
 				}
-				
+
 				for (String countryCode : article.countries) {
 					if (countryData.containsKey(countryCode)) {
 						countryData.get(countryCode).articlesCollection.add(article);
@@ -160,32 +150,39 @@ public class ItemListFragment extends ListFragment {
 						countryData.put(countryCode, country);
 					}
 				}
-				
+
 				HashMap<String, String> map = new HashMap<String, String>();
 				map.put("title", article.title);
 				map.put("teaser", article.teaser);
 				map.put("image", DataService.SERVER_URL + article.cover_url);
 				listData.add(map);
 			}
-			
+
 			for (Country country : countryData.values()) {
-//				Log.e("country", country.id);
+				//				Log.e("country", country.id);
 				DataService.countries.add(country);
 			}
-			
+
 			for (Chapter chapter : chapterData.values()) {
 				Log.e("chapter", chapter.id);
 				DataService.chapters.add(chapter);
 			}
 
-			ListAdapter adapter = new ImageSimpleAdapter(
-					getActivity(),
-					listData,
-					R.layout.list_item_image,
-					new String[] {"title","teaser","image"},
-					new int[]{R.id.list_title,R.id.list_teaser,R.id.list_image}); 
-
-			setListAdapter(adapter);
+			ExpandListAdapter adapter = new ExpandListAdapter(getActivity(), DataService.chapters);
+			ExpandableListView lv = (ExpandableListView) getActivity().findViewById(R.id.ExpList);
+			lv.setAdapter(adapter);
+			
+			
+			lv.setOnChildClickListener(new OnChildClickListener() {
+				@Override
+				public boolean onChildClick(ExpandableListView parent, View v,
+						int groupPosition, int childPosition, long id) {
+					((MainActivity)getActivity()).onItemSelected(""+childPosition);
+					return true;
+				}
+			});
+			
+			
 		}
 	}
 
@@ -195,14 +192,14 @@ public class ItemListFragment extends ListFragment {
 
 		// Restore the previously serialized activated item position.
 		if (mTwoPane) setActivateOnItemClick(true);
-		
+
 		if (savedInstanceState != null) {
-			
-			
+
+
 			if (savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
 				int position = savedInstanceState.getInt(STATE_ACTIVATED_POSITION);
 				setActivatedPosition(position);
-				mCallbacks.onItemSelected(""+position);
+//				mCallbacks.onItemSelected(""+position);
 			}
 
 			if (savedInstanceState.containsKey(STATE_TWO_PANE)) {
@@ -219,11 +216,11 @@ public class ItemListFragment extends ListFragment {
 		super.onAttach(activity);
 
 		// Activities containing this fragment must implement its callbacks.
-		if (!(activity instanceof Callbacks)) {
-			throw new IllegalStateException("Activity must implement fragment's callbacks.");
-		}
-
-		mCallbacks = (Callbacks) activity;
+		//		if (!(activity instanceof Callbacks)) {
+		//			throw new IllegalStateException("Activity must implement fragment's callbacks.");
+		//		}
+		//
+		//		mCallbacks = (Callbacks) activity;
 	}
 
 	@Override
@@ -231,28 +228,28 @@ public class ItemListFragment extends ListFragment {
 		super.onDetach();
 
 		// Reset the active callbacks interface to the dummy implementation.
-		mCallbacks = sDummyCallbacks;
+//		mCallbacks = sDummyCallbacks;
 	}
 
-	@Override
-	public void onListItemClick(ListView listView, View view, int position, long id) {
-		super.onListItemClick(listView, view, position, id);
-
-		// Notify the active callbacks interface (the activity, if the
-		// fragment is attached to one) that an item has been selected.
-		mCallbacks.onItemSelected(""+position);
-	}
+//	@Override
+//	public void onListItemClick(ListView listView, View view, int position, long id) {
+//		super.onListItemClick(listView, view, position, id);
+//
+//		// Notify the active callbacks interface (the activity, if the
+//		// fragment is attached to one) that an item has been selected.
+//		mCallbacks.onItemSelected(""+position);
+//	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		
+
 		outState.putBoolean(STATE_TWO_PANE, mTwoPane);
-		
+
 		if (mActivatedPosition != ListView.INVALID_POSITION) {
 			// Serialize and persist the activated item position.
 			outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
-			
+
 		}
 	}
 
@@ -263,17 +260,17 @@ public class ItemListFragment extends ListFragment {
 	public void setActivateOnItemClick(boolean activateOnItemClick) {
 		// When setting CHOICE_MODE_SINGLE, ListView will automatically
 		// give items the 'activated' state when touched.
-		getListView().setChoiceMode(activateOnItemClick
-				? ListView.CHOICE_MODE_SINGLE
-						: ListView.CHOICE_MODE_NONE);
+		//		getListView().setChoiceMode(activateOnItemClick
+		//				? ListView.CHOICE_MODE_SINGLE
+		//						: ListView.CHOICE_MODE_NONE);
 	}
 
 	private void setActivatedPosition(int position) {
-		if (position == ListView.INVALID_POSITION) {
-			getListView().setItemChecked(mActivatedPosition, false);
-		} else {
-			getListView().setItemChecked(position, true);
-		}
+		//		if (position == ListView.INVALID_POSITION) {
+		//			getListView().setItemChecked(mActivatedPosition, false);
+		//		} else {
+		//			getListView().setItemChecked(position, true);
+		//		}
 
 		mActivatedPosition = position;
 	}

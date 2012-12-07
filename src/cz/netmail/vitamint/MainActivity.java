@@ -1,34 +1,21 @@
 package cz.netmail.vitamint;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -36,7 +23,6 @@ import com.google.gson.reflect.TypeToken;
 import cz.netmail.vitamint.model.Article;
 import cz.netmail.vitamint.model.Chapter;
 import cz.netmail.vitamint.model.Country;
-import cz.netmail.vitamint.service.DataService;
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener, ItemListFragment.Callbacks {
 
@@ -68,9 +54,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-
-
 
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
@@ -114,16 +97,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 			// res/values-sw600dp). If this view is present, then the
 			// activity should be in two-pane mode.
 			mTwoPane = true;
-
-			// In two-pane mode, list items should be given the
-			// 'activated' state when touched.
-
-//			((ItemListFragment) getSupportFragmentManager()
-//					.findFragmentById(R.id.item_list))
-					
 		}
-
-
 	}
 
 	@SuppressWarnings("deprecation")
@@ -202,9 +176,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		public Fragment getItem(int position) {
 			// getItem is called to instantiate the fragment for the given page.
 
-			Fragment fragment = new ItemListFragment();
-			((ItemListFragment)fragment).mTwoPane = mTwoPane;
-//				setActivateOnItemClick(true);
+//			Fragment fragment = new ItemListFragment();
+//			((ItemListFragment)fragment).mTwoPane = mTwoPane;
+
+//							setActivateOnItemClick(true);
+	
+			Fragment fragment = new ItemExpandableListFragment();
 			
 			Bundle args = new Bundle();
 			args.putString(ItemListFragment.ARG_SECTION_NAME, getPageTitle(position).toString());
