@@ -192,6 +192,12 @@ public class AccountActivity extends ListActivity {
 				map.put("title", article.title);
 				map.put("id", ""+article.id);
 				map.put("teaser", article.teaser);
+				map.put("country", article.country);
+				
+				map.put("views", article.stats.views.toString());
+				map.put("likes", article.stats.likes.toString());
+				map.put("comments", article.stats.comments.toString());
+				
 				if (article.cover_url!=null) map.put("image", DataService.SERVER_URL + article.cover_url);
 				DataService.listData.add(map);
 			}
@@ -202,7 +208,7 @@ public class AccountActivity extends ListActivity {
 			}
 			
 			for (Chapter chapter : chapterData.values()) {
-				Log.e("chapter", chapter.id);
+//				Log.e("chapter", chapter.id);
 				DataService.chapters.add(chapter);
 			}
 			

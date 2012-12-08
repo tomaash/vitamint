@@ -7,6 +7,7 @@ public class Stat {
     public Integer views;
     public Integer score;
     public Integer likes;
+    public Integer comments;
     public Integer activity;
     public List<Comment> last_comments;
 }

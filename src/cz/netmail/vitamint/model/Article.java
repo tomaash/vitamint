@@ -13,6 +13,7 @@ public class Article {
     public String description;
     public String title;
     public String order;
+    public String country;
     
     // FIXME dates
     public String edited;
@@ -25,6 +26,8 @@ public class Article {
     
     public List<Integer> authors;
     public List<String> countries;
+    
+    
 
     // FIXME proper objects
 //    public List<String> attachments;

@@ -49,17 +49,30 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
 		Article child = (Article) getChild(groupPosition, childPosition);
 		if (view == null) {
 			LayoutInflater infalInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-			view = infalInflater.inflate(R.layout.list_item_child, null);
+			view = infalInflater.inflate(R.layout.list_item_image, null);
 		}
-//		TextView tv = (TextView) view.findViewById(R.id.list_title);
+
 		((TextView) view.findViewById(R.id.list_title)).setText(child.title.toString());
 		((TextView) view.findViewById(R.id.list_teaser)).setText(child.teaser.toString());
+		
+		((TextView) view.findViewById(R.id.views_text)).setText(child.stats.views.toString());
+		((TextView) view.findViewById(R.id.likes_text)).setText(child.stats.likes.toString());
+		((TextView) view.findViewById(R.id.comments_text)).setText(child.stats.comments.toString());
+		
+		((TextView) view.findViewById(R.id.list_spacer)).setVisibility(View.VISIBLE);
 		
 		if (child.cover_url!=null && !child.cover_url.isEmpty()) {
 			String url = DataService.SERVER_URL + child.cover_url;
 			ImageView iv = (ImageView)view.findViewById(R.id.list_image);
 			UrlImageViewHelper.setUrlDrawable(iv, url, R.drawable.loading, null);
 		}
+		
+		if (child.country!=null) {
+			ImageView countryFlag = (ImageView)view.findViewById(R.id.country_image);
+			countryFlag.setImageResource(DataService.getResourceForCountry(child.country));	
+		}
+		
+		
 		
 		return view;
 	}
@@ -99,28 +112,12 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
 			teaser.setVisibility(View.GONE);
 		}
 		
-		((ImageView) view.findViewById(R.id.list_image)).setImageResource(getResourceForCountry(group.id));
-		
-//		TextView tv = (TextView) view.findViewById(R.id.list_title);
-//		tv.setText(group.name);
-		
+		((ImageView) view.findViewById(R.id.list_image)).setImageResource(DataService.getResourceForCountry(group.id));
 		
 		return view;
 	}
 	
-	private int getResourceForCountry(String code) {
-		if (code.contentEquals("cz")) return R.drawable.czech_republic;
-		if (code.contentEquals("bg")) return R.drawable.bulgaria;
-		if (code.contentEquals("gr")) return R.drawable.greece;
-		if (code.contentEquals("es")) return R.drawable.spain;
-		if (code.contentEquals("pl")) return R.drawable.poland;
-		if (code.contentEquals("kr")) return R.drawable.south_korea;
-		if (code.contentEquals("nl")) return R.drawable.nederland;
-		if (code.contentEquals("ro")) return R.drawable.romania;
-		if (code.contentEquals("sk")) return R.drawable.slovakia;
-		if (code.contentEquals("tr")) return R.drawable.turkey;
-		return R.drawable.chapter;
-	}
+	
 	
 	public boolean hasStableIds() {
 		return true;

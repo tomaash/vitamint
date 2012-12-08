@@ -11,7 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import cz.netmail.vitamint.R;
+import cz.netmail.vitamint.service.DataService;
 
 public class ImageSimpleAdapter extends SimpleAdapter {
 
@@ -32,6 +34,13 @@ public class ImageSimpleAdapter extends SimpleAdapter {
 			ImageView iv = (ImageView)view.findViewById(R.id.list_image);
 			UrlImageViewHelper.setUrlDrawable(iv, imageUrl, R.drawable.loading, null);
 		}
+		
+		if (data.get("country")!=null) {
+			ImageView countryFlag = (ImageView)view.findViewById(R.id.country_image);
+			countryFlag.setImageResource(DataService.getResourceForCountry(data.get("country")));	
+		}
+		
+		((TextView) view.findViewById(R.id.list_spacer)).setVisibility(View.GONE);
 
 		return view;
 	}
