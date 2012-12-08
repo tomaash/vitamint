@@ -3,6 +3,7 @@ package cz.netmail.vitamint.service;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -29,5 +30,7 @@ public class DataService {
 	public static Collection<Article> articles;
 	public static List<ExpandableDataProvider> chapters;
 	public static List<ExpandableDataProvider> countries;
+	
+	public static ArrayList<HashMap<String, String>> listData;
 
 }

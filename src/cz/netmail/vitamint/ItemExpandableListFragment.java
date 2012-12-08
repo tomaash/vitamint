@@ -1,34 +1,20 @@
 package cz.netmail.vitamint;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.util.EntityUtils;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.ListFragment;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 import cz.netmail.vitamint.ItemListFragment.Callbacks;
 import cz.netmail.vitamint.component.ExpandListAdapter;
 import cz.netmail.vitamint.model.Article;
-import cz.netmail.vitamint.model.Chapter;
-import cz.netmail.vitamint.model.Country;
 import cz.netmail.vitamint.model.ExpandableDataProvider;
 import cz.netmail.vitamint.service.DataService;
 
@@ -60,7 +46,7 @@ public class ItemExpandableListFragment extends Fragment {
 	 * The fragment's current callback object, which is notified of list item
 	 * clicks.
 	 */
-//	private Callbacks mCallbacks = sDummyCallbacks;
+	//	private Callbacks mCallbacks = sDummyCallbacks;
 
 	/**
 	 * The current activated item position. Only used on tablets.
@@ -68,6 +54,7 @@ public class ItemExpandableListFragment extends Fragment {
 	private int mActivatedPosition = ListView.INVALID_POSITION;
 
 	private ListFragment parentFragment;
+	private ExpandListAdapter adapter;
 
 
 	public ItemExpandableListFragment() {
@@ -77,6 +64,30 @@ public class ItemExpandableListFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.expandable_main, container, false);
+		
+		int section = getArguments().getInt(MainActivity.ARG_SECTION_ID);
+		
+		List<ExpandableDataProvider> data;
+		if (section == 1) {
+			data = DataService.countries;
+		} else {
+			data = DataService.chapters;
+		}
+		
+		adapter = new ExpandListAdapter(getActivity(), data);
+		ExpandableListView lv = (ExpandableListView) v.findViewById(R.id.ExpList);
+		lv.setAdapter(adapter);
+
+		lv.setOnChildClickListener(new OnChildClickListener() {
+			@Override
+			public boolean onChildClick(ExpandableListView parent, View v,
+					int groupPosition, int childPosition, long id) {
+				Article child = (Article)adapter.getChild(groupPosition, childPosition);
+				((MainActivity)getActivity()).onItemSelected(""+child.id);
+				//					((MainActivity)getActivity()).onItemSelected(""+childPosition);
+				return true;
+			}
+		});
 		return v;
 	}
 
@@ -84,107 +95,13 @@ public class ItemExpandableListFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	}
-	
+
 	@Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        new LoadArticlesTask().execute();
-    }
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 
-	private class LoadArticlesTask extends AsyncTask<Void,Void,Collection<Article>> {
-		@Override
-		protected Collection<Article> doInBackground(Void... nil) {
-			try {
-				String url = "https://oauth-demo-netmail.appspot.com/api/articles";
-				HttpGet http_get = new HttpGet(url);
-				HttpResponse result = DataService.client.execute(http_get);
-				String data = EntityUtils.toString(result.getEntity());
-				Collection<Article> articles = DataService.gson.fromJson(data, DataService.ArticleCollectionType);
-				return articles;
-			} catch (ClientProtocolException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		protected void onPostExecute(Collection<Article> result) {
-			//				Log.e("data", result.toString());
-			//				Toast.makeText(getActivity().getApplicationContext(), result.toString(), Toast.LENGTH_LONG).show();
-			if (result == null || result.isEmpty()) {
-				Toast.makeText(getActivity().getApplicationContext(), "No articles for this account", Toast.LENGTH_LONG).show();
-				return;
-			}
-
-			DataService.articles = result;
-
-			ArrayList<HashMap<String, String>> listData = new ArrayList<HashMap<String, String>>();
-			HashMap<String, Chapter> chapterData = new HashMap<String, Chapter>();
-			HashMap<String, Country> countryData = new HashMap<String, Country>();
-			DataService.countries = new ArrayList<ExpandableDataProvider>();
-			DataService.chapters = new ArrayList<ExpandableDataProvider>();
-
-			for (Article article : result) {
-				//				Log.e("chapter", article.chapter);
-				//				Log.e("title", article.title);
-				if (chapterData.containsKey(article.chapter)) {
-					chapterData.get(article.chapter).articlesCollection.add(article);
-				} else {
-					Chapter chapter = new Chapter();
-					chapter.id = article.chapter;
-					chapter.name = article.chapter;
-					chapter.articlesCollection = new ArrayList<Article>();
-					chapter.articlesCollection.add(article);
-					chapterData.put(article.chapter, chapter);
-				}
-
-				for (String countryCode : article.countries) {
-					if (countryData.containsKey(countryCode)) {
-						countryData.get(countryCode).articlesCollection.add(article);
-					} else {
-						Country country = new Country();
-						country.id = countryCode;
-						country.articlesCollection = new ArrayList<Article>();
-						country.articlesCollection.add(article);
-						countryData.put(countryCode, country);
-					}
-				}
-
-				HashMap<String, String> map = new HashMap<String, String>();
-				map.put("title", article.title);
-				map.put("teaser", article.teaser);
-				map.put("image", DataService.SERVER_URL + article.cover_url);
-				listData.add(map);
-			}
-
-			for (Country country : countryData.values()) {
-				//				Log.e("country", country.id);
-				DataService.countries.add(country);
-			}
-
-			for (Chapter chapter : chapterData.values()) {
-				Log.e("chapter", chapter.id);
-				DataService.chapters.add(chapter);
-			}
-
-			ExpandListAdapter adapter = new ExpandListAdapter(getActivity(), DataService.chapters);
-			ExpandableListView lv = (ExpandableListView) getActivity().findViewById(R.id.ExpList);
-			lv.setAdapter(adapter);
-			
-			
-			lv.setOnChildClickListener(new OnChildClickListener() {
-				@Override
-				public boolean onChildClick(ExpandableListView parent, View v,
-						int groupPosition, int childPosition, long id) {
-					((MainActivity)getActivity()).onItemSelected(""+childPosition);
-					return true;
-				}
-			});
-			
-			
-		}
 	}
+
 
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -199,7 +116,7 @@ public class ItemExpandableListFragment extends Fragment {
 			if (savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
 				int position = savedInstanceState.getInt(STATE_ACTIVATED_POSITION);
 				setActivatedPosition(position);
-//				mCallbacks.onItemSelected(""+position);
+				//				mCallbacks.onItemSelected(""+position);
 			}
 
 			if (savedInstanceState.containsKey(STATE_TWO_PANE)) {
@@ -228,17 +145,17 @@ public class ItemExpandableListFragment extends Fragment {
 		super.onDetach();
 
 		// Reset the active callbacks interface to the dummy implementation.
-//		mCallbacks = sDummyCallbacks;
+		//		mCallbacks = sDummyCallbacks;
 	}
 
-//	@Override
-//	public void onListItemClick(ListView listView, View view, int position, long id) {
-//		super.onListItemClick(listView, view, position, id);
-//
-//		// Notify the active callbacks interface (the activity, if the
-//		// fragment is attached to one) that an item has been selected.
-//		mCallbacks.onItemSelected(""+position);
-//	}
+	//	@Override
+	//	public void onListItemClick(ListView listView, View view, int position, long id) {
+	//		super.onListItemClick(listView, view, position, id);
+	//
+	//		// Notify the active callbacks interface (the activity, if the
+	//		// fragment is attached to one) that an item has been selected.
+	//		mCallbacks.onItemSelected(""+position);
+	//	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {

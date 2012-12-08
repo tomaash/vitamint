@@ -35,6 +35,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	 * {@link android.support.v4.app.FragmentStatePagerAdapter}.
 	 */
 	SectionsPagerAdapter mSectionsPagerAdapter;
+	
+	public static final String ARG_SECTION_ID = "section_id";
 
 	/**
 	 * The {@link ViewPager} that will host the section contents.
@@ -175,19 +177,19 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		@Override
 		public Fragment getItem(int position) {
 			// getItem is called to instantiate the fragment for the given page.
-
-//			Fragment fragment = new ItemListFragment();
-//			((ItemListFragment)fragment).mTwoPane = mTwoPane;
-
-//							setActivateOnItemClick(true);
-	
-			Fragment fragment = new ItemExpandableListFragment();
-			
+			Fragment fragment;
+			if (position==0) {
+				fragment = new ItemListFragment();
+				((ItemListFragment)fragment).mTwoPane = mTwoPane;
+//			} else if (position==1){
+//				fragment = new CountryExpandableListFragment();
+			} else {
+				fragment = new ItemExpandableListFragment();	
+			}
 			Bundle args = new Bundle();
-			args.putString(ItemListFragment.ARG_SECTION_NAME, getPageTitle(position).toString());
+			args.putInt(ARG_SECTION_ID, position);
 			fragment.setArguments(args);
 			return fragment;
-
 		}
 
 		@Override

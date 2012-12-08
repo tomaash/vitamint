@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
@@ -47,8 +48,15 @@ public class ItemDetailFragment extends Fragment {
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
         	int position = Integer.parseInt(getArguments().getString(ARG_ITEM_ID));
-        	Object[] array = (Object[])DataService.articles.toArray();
-        	mItem = (Article)array[position];
+//        	Object[] array = (Object[])DataService.articles.toArray();
+//        	mItem = (Article)array[position];
+        	for (Article article : DataService.articles) {
+        		if (article.id == position) mItem = article;
+        	}
+        	
+        	if (mItem==null) {
+        		Toast.makeText(getActivity().getApplicationContext(), "Article with id " + position + " not found", Toast.LENGTH_LONG).show();
+        	}
 //            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
         }
     }
