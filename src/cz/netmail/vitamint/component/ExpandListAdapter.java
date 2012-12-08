@@ -5,6 +5,7 @@ import java.util.List;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 import android.content.Context;
+import android.opengl.Visibility;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +55,7 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
 		((TextView) view.findViewById(R.id.list_title)).setText(child.title.toString());
 		((TextView) view.findViewById(R.id.list_teaser)).setText(child.teaser.toString());
 		
-		if (child.cover_url!=null) {
+		if (child.cover_url!=null && !child.cover_url.isEmpty()) {
 			String url = DataService.SERVER_URL + child.cover_url;
 			ImageView iv = (ImageView)view.findViewById(R.id.list_image);
 			UrlImageViewHelper.setUrlDrawable(iv, url, R.drawable.loading, null);
@@ -89,6 +90,14 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
 		}
 		
 		((TextView) view.findViewById(R.id.list_title)).setText(group.name);
+		
+		TextView teaser = (TextView) view.findViewById(R.id.list_teaser);
+		if (group.introduction!=null && !group.introduction.isEmpty()) {
+			teaser.setText(group.introduction);
+			teaser.setVisibility(View.VISIBLE);
+		} else {
+			teaser.setVisibility(View.GONE);
+		}
 		
 		((ImageView) view.findViewById(R.id.list_image)).setImageResource(getResourceForCountry(group.id));
 		

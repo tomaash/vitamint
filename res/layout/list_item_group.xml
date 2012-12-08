@@ -30,11 +30,11 @@
             android:gravity="left" />
     </LinearLayout>
 
-<!--     <TextView
+    <TextView
         android:id="@+id/list_teaser"
         style="?android:attr/textAppearanceSmall"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:maxLines="3" />
- -->
+
 </LinearLayout>

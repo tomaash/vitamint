@@ -73,8 +73,7 @@ public class ItemDetailFragment extends Fragment {
 
 			ImageView iv = (ImageView)rootView.findViewById(R.id.item_image);
 
-			Article item = mItem;
-			if (mItem.cover_url != null) {
+			if (mItem.cover_url != null && !mItem.cover_url.isEmpty()) {
 				String url = DataService.SERVER_URL + mItem.cover_url;
 				UrlImageViewHelper.setUrlDrawable(iv, url, R.drawable.loading, null);
 			}
