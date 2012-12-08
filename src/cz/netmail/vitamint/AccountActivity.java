@@ -206,22 +206,82 @@ public class AccountActivity extends ListActivity {
 				DataService.chapters.add(chapter);
 			}
 			
+			
+			new LoadCountriesTask().execute();
+			
+		}
+	}
+	
+	
+	private class LoadCountriesTask extends AsyncTask<Void,Void,String> {
+		@Override
+		protected String doInBackground(Void... nil) {
+			try {
+				String url = "https://oauth-demo-netmail.appspot.com/api/countries";
+				HttpGet http_get = new HttpGet(url);
+				HttpResponse result = DataService.client.execute(http_get);
+				String data = EntityUtils.toString(result.getEntity());
+				return data;
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		protected void onPostExecute(String result) {
+			Collection<Country> countries = DataService.gson.fromJson(result, DataService.CountryCollectionType);
+			HashMap<String, Country> countryData = new HashMap<String, Country>();
+			for (Country country : countries) {
+				countryData.put(country.id, country);
+			}
+			for (ExpandableDataProvider country : DataService.countries) {
+				country.name = countryData.get(country.id).name;
+			}
+			
+			new LoadChaptersTask().execute();
+		}
+	}
+	
+	private class LoadChaptersTask extends AsyncTask<Void,Void,String> {
+		@Override
+		protected String doInBackground(Void... nil) {
+			try {
+				String url = "https://oauth-demo-netmail.appspot.com/api/chapters";
+				HttpGet http_get = new HttpGet(url);
+				HttpResponse result = DataService.client.execute(http_get);
+				String data = EntityUtils.toString(result.getEntity());
+				return data;
+			} catch (ClientProtocolException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		protected void onPostExecute(String result) {
+			Collection<Chapter> chapters = DataService.gson.fromJson(result, DataService.ChapterCollectionType);
+			HashMap<String, Chapter> chapterData = new HashMap<String, Chapter>();
+			for (Chapter chapter : chapters) {
+				chapterData.put(chapter.id, chapter);
+			}
+			for (ExpandableDataProvider chapter : DataService.chapters) {
+				chapter.title = chapterData.get(chapter.id).title;
+				chapter.name = chapterData.get(chapter.id).title;
+				chapter.introduction = chapterData.get(chapter.id).introduction;
+			}
+			
 			if (AccountActivity.dailog!=null) {
 				AccountActivity.dailog.dismiss();
 			}			
 			
 			Intent intent = new Intent(parentActivity, MainActivity.class);
 			startActivity(intent);
-			
+
 		}
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 }
