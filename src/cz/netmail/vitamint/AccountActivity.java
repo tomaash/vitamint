@@ -192,7 +192,7 @@ public class AccountActivity extends ListActivity {
 				map.put("title", article.title);
 				map.put("id", ""+article.id);
 				map.put("teaser", article.teaser);
-				map.put("image", DataService.SERVER_URL + article.cover_url);
+				if (article.cover_url!=null) map.put("image", DataService.SERVER_URL + article.cover_url);
 				DataService.listData.add(map);
 			}
 			

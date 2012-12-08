@@ -2,15 +2,19 @@ package cz.netmail.vitamint.component;
 
 import java.util.List;
 
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import cz.netmail.vitamint.R;
 import cz.netmail.vitamint.model.Article;
 import cz.netmail.vitamint.model.ExpandableDataProvider;
+import cz.netmail.vitamint.service.DataService;
 
 public class ExpandListAdapter extends BaseExpandableListAdapter {
 
@@ -44,11 +48,18 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
 		Article child = (Article) getChild(groupPosition, childPosition);
 		if (view == null) {
 			LayoutInflater infalInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-			view = infalInflater.inflate(R.layout.list_item_image, null);
+			view = infalInflater.inflate(R.layout.list_item_child, null);
 		}
-		TextView tv = (TextView) view.findViewById(R.id.list_title);
-		tv.setText(child.title.toString());
-
+//		TextView tv = (TextView) view.findViewById(R.id.list_title);
+		((TextView) view.findViewById(R.id.list_title)).setText(child.title.toString());
+		((TextView) view.findViewById(R.id.list_teaser)).setText(child.teaser.toString());
+		
+		if (child.cover_url!=null) {
+			String url = DataService.SERVER_URL + child.cover_url;
+			ImageView iv = (ImageView)view.findViewById(R.id.list_image);
+			UrlImageViewHelper.setUrlDrawable(iv, url, R.drawable.loading, null);
+		}
+		
 		return view;
 	}
 
@@ -76,9 +87,30 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
 			LayoutInflater inf = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
 			view = inf.inflate(R.layout.list_item_group, null);
 		}
-		TextView tv = (TextView) view.findViewById(R.id.list_title);
-		tv.setText(group.name);
+		
+		((TextView) view.findViewById(R.id.list_title)).setText(group.name);
+		
+		((ImageView) view.findViewById(R.id.list_image)).setImageResource(getResourceForCountry(group.id));
+		
+//		TextView tv = (TextView) view.findViewById(R.id.list_title);
+//		tv.setText(group.name);
+		
+		
 		return view;
+	}
+	
+	private int getResourceForCountry(String code) {
+		if (code.contentEquals("cz")) return R.drawable.czech_republic;
+		if (code.contentEquals("bg")) return R.drawable.bulgaria;
+		if (code.contentEquals("gr")) return R.drawable.greece;
+		if (code.contentEquals("es")) return R.drawable.spain;
+		if (code.contentEquals("pl")) return R.drawable.poland;
+		if (code.contentEquals("kr")) return R.drawable.south_korea;
+		if (code.contentEquals("nl")) return R.drawable.nederland;
+		if (code.contentEquals("ro")) return R.drawable.romania;
+		if (code.contentEquals("sk")) return R.drawable.slovakia;
+		if (code.contentEquals("tr")) return R.drawable.turkey;
+		return R.drawable.chapter;
 	}
 	
 	public boolean hasStableIds() {
