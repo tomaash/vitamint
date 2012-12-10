@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">VitaminT</string>
+    <string name="title_section4">Activity</string>
     <string name="title_section3">Chapter</string>
     <string name="title_section2">Country</string>
     <string name="title_section1">Newest</string>

@@ -12,8 +12,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.storage.StorageManager;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
@@ -63,7 +65,6 @@ public class ItemListFragment extends ListFragment {
 	 */
 	private int mActivatedPosition = ListView.INVALID_POSITION;
 
-	private ListFragment parentFragment;
 
 	/**
 	 * A callback interface that all activities containing this fragment must
@@ -97,10 +98,26 @@ public class ItemListFragment extends ListFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		parentFragment = this;
+
+		int section = getArguments().getInt(MainActivity.ARG_SECTION_ID);
+
+		ArrayList<HashMap<String, String>> data;
+		if (section == 3) {
+			data = DataService.actionListData;
+		} else {
+			data = DataService.listData;
+		}
+		
+		if (data==null || data.isEmpty()) {
+			Intent intent = new Intent(getActivity(), AccountActivity.class);
+			startActivity(intent);
+			getActivity().finish();
+			return;
+		}
+
 		ListAdapter adapter = new ImageSimpleAdapter(
 				getActivity(),
-				DataService.listData,
+				data,
 				R.layout.list_item_image,
 				new String[] {"title","teaser","image","views","likes","comments"},
 				new int[]{R.id.list_title,R.id.list_teaser,R.id.list_image,R.id.views_text,R.id.likes_text,R.id.comments_text}); 
@@ -115,10 +132,10 @@ public class ItemListFragment extends ListFragment {
 
 		// Restore the previously serialized activated item position.
 		if (mTwoPane) setActivateOnItemClick(true);
-		
+
 		if (savedInstanceState != null) {
-			
-			
+
+
 			if (savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
 				int position = savedInstanceState.getInt(STATE_ACTIVATED_POSITION);
 				setActivatedPosition(position);
@@ -167,13 +184,13 @@ public class ItemListFragment extends ListFragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		
+
 		outState.putBoolean(STATE_TWO_PANE, mTwoPane);
-		
+
 		if (mActivatedPosition != ListView.INVALID_POSITION) {
 			// Serialize and persist the activated item position.
 			outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
-			
+
 		}
 	}
 

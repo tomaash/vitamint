@@ -45,10 +45,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 	DefaultHttpClient http_client = new DefaultHttpClient();
 
-	private Gson gson = new Gson();
-	Type ChapterCollectionType = new TypeToken<Collection<Chapter>>(){}.getType();
-	Type CountryCollectionType = new TypeToken<Collection<Country>>(){}.getType();
-	Type ArticleCollectionType = new TypeToken<Collection<Article>>(){}.getType();
+//	private Gson gson = new Gson();
+//	Type ChapterCollectionType = new TypeToken<Collection<Chapter>>(){}.getType();
+//	Type CountryCollectionType = new TypeToken<Collection<Country>>(){}.getType();
+//	Type ArticleCollectionType = new TypeToken<Collection<Article>>(){}.getType();
 
 	private boolean mTwoPane;
 
@@ -178,11 +178,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 		public Fragment getItem(int position) {
 			// getItem is called to instantiate the fragment for the given page.
 			Fragment fragment;
-			if (position==0) {
+			if (position==0 || position==3) {
 				fragment = new ItemListFragment();
 				((ItemListFragment)fragment).mTwoPane = mTwoPane;
-//			} else if (position==1){
-//				fragment = new CountryExpandableListFragment();
 			} else {
 				fragment = new ItemExpandableListFragment();	
 			}
@@ -194,8 +192,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 		@Override
 		public int getCount() {
-			// Show 3 total pages.
-			return 3;
+			return 4;
 		}
 
 		@Override
@@ -207,6 +204,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 				return getString(R.string.title_section2).toUpperCase();
 			case 2:
 				return getString(R.string.title_section3).toUpperCase();
+			case 3:
+				return getString(R.string.title_section4).toUpperCase();
+
 			}
 			return null;
 		}

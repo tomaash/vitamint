@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.app.ListFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -72,6 +73,13 @@ public class ItemExpandableListFragment extends Fragment {
 			data = DataService.countries;
 		} else {
 			data = DataService.chapters;
+		}
+		
+		if (data==null || data.isEmpty()) {
+			Intent intent = new Intent(getActivity(), AccountActivity.class);
+			startActivity(intent);
+			getActivity().finish();
+			return v;
 		}
 		
 		adapter = new ExpandListAdapter(getActivity(), data);
