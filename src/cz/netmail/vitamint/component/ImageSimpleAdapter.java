@@ -40,7 +40,7 @@ public class ImageSimpleAdapter extends SimpleAdapter {
 			countryFlag.setImageResource(DataService.getResourceForCountry(data.get("country")));	
 		}
 		
-		((TextView) view.findViewById(R.id.list_spacer)).setVisibility(View.GONE);
+//		((TextView) view.findViewById(R.id.list_spacer)).setVisibility(View.GONE);
 
 		return view;
 	}

@@ -210,7 +210,7 @@ public class AccountActivity extends ListActivity {
 
 				// Don't follow redirects
  				DataService.client.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
-				String url = "https://oauth-demo-netmail.appspot.com/_ah/login?continue=http://localhost/&auth=" + tokens[0];
+				String url = DataService.SERVER_URL + "/_ah/login?continue=http://localhost/&auth=" + tokens[0];
 				HttpGet http_get = new HttpGet(url);
 				HttpResponse response;
 				response = DataService.client.execute(http_get);
@@ -250,7 +250,7 @@ public class AccountActivity extends ListActivity {
 		@Override
 		protected Collection<Article> doInBackground(Void... nil) {
 			try {
-				String url = "https://oauth-demo-netmail.appspot.com/api/articles";
+				String url = DataService.SERVER_URL + "/api/articles";
 				HttpGet http_get = new HttpGet(url);
 				HttpResponse result = DataService.client.execute(http_get);
 				String data = EntityUtils.toString(result.getEntity());
@@ -348,7 +348,7 @@ public class AccountActivity extends ListActivity {
 		@Override
 		protected String doInBackground(Void... nil) {
 			try {
-				String url = "https://oauth-demo-netmail.appspot.com/api/countries";
+				String url = DataService.SERVER_URL + "/api/countries";
 				HttpGet http_get = new HttpGet(url);
 				HttpResponse result = DataService.client.execute(http_get);
 				String data = EntityUtils.toString(result.getEntity());
@@ -379,7 +379,7 @@ public class AccountActivity extends ListActivity {
 		@Override
 		protected String doInBackground(Void... nil) {
 			try {
-				String url = "https://oauth-demo-netmail.appspot.com/api/chapters";
+				String url = DataService.SERVER_URL + "/api/chapters";
 				HttpGet http_get = new HttpGet(url);
 				HttpResponse result = DataService.client.execute(http_get);
 				String data = EntityUtils.toString(result.getEntity());
@@ -419,7 +419,7 @@ public class AccountActivity extends ListActivity {
 		@Override
 		protected String doInBackground(Void... nil) {
 			try {
-				String url = "https://oauth-demo-netmail.appspot.com/api/users";
+				String url = DataService.SERVER_URL + "/api/users";
 				HttpGet http_get = new HttpGet(url);
 				HttpResponse result = DataService.client.execute(http_get);
 				String data = EntityUtils.toString(result.getEntity());
@@ -447,7 +447,7 @@ public class AccountActivity extends ListActivity {
 		@Override
 		protected String doInBackground(Void... nil) {
 			try {
-				String url = "https://oauth-demo-netmail.appspot.com/api/users/activities";
+				String url = DataService.SERVER_URL + "/api/users/activities";
 				HttpGet http_get = new HttpGet(url);
 				HttpResponse result = DataService.client.execute(http_get);
 				String data = EntityUtils.toString(result.getEntity());
@@ -497,5 +497,6 @@ public class AccountActivity extends ListActivity {
 		running = false;
 		Intent intent = new Intent(parentActivity, MainActivity.class);
 		startActivity(intent);
+//		this.finish();
 	}
 }

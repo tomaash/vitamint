@@ -118,7 +118,7 @@ public class ItemListFragment extends ListFragment {
 		ListAdapter adapter = new ImageSimpleAdapter(
 				getActivity(),
 				data,
-				R.layout.list_item_image,
+				R.layout.list_item_child,
 				new String[] {"title","teaser","image","views","likes","comments"},
 				new int[]{R.id.list_title,R.id.list_teaser,R.id.list_image,R.id.views_text,R.id.likes_text,R.id.comments_text}); 
 

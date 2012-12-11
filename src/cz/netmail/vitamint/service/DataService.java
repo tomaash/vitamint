@@ -55,6 +55,7 @@ public class DataService {
 		if (code.contentEquals("gr")) return R.drawable.greece;
 		if (code.contentEquals("es")) return R.drawable.spain;
 		if (code.contentEquals("pl")) return R.drawable.poland;
+		if (code.contentEquals("hu")) return R.drawable.hungary;
 		if (code.contentEquals("kr")) return R.drawable.south_korea;
 		if (code.contentEquals("nl")) return R.drawable.nederland;
 		if (code.contentEquals("ro")) return R.drawable.romania;

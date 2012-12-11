@@ -2,16 +2,18 @@ package cz.netmail.vitamint.component;
 
 import java.util.List;
 
-import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
-
 import android.content.Context;
-import android.opengl.Visibility;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
+
 import cz.netmail.vitamint.R;
 import cz.netmail.vitamint.model.Article;
 import cz.netmail.vitamint.model.ExpandableDataProvider;
@@ -49,7 +51,7 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
 		Article child = (Article) getChild(groupPosition, childPosition);
 		if (view == null) {
 			LayoutInflater infalInflater = (LayoutInflater) context.getSystemService(context.LAYOUT_INFLATER_SERVICE);
-			view = infalInflater.inflate(R.layout.list_item_image, null);
+			view = infalInflater.inflate(R.layout.list_item_child, null);
 		}
 
 		((TextView) view.findViewById(R.id.list_title)).setText(child.title.toString());
@@ -59,7 +61,7 @@ public class ExpandListAdapter extends BaseExpandableListAdapter {
 		((TextView) view.findViewById(R.id.likes_text)).setText(child.stats.likes.toString());
 		((TextView) view.findViewById(R.id.comments_text)).setText(child.stats.comments.toString());
 		
-		((TextView) view.findViewById(R.id.list_spacer)).setVisibility(View.VISIBLE);
+		view.setPaddingRelative(50,0,0,0);
 		
 		if (child.cover_url!=null && !child.cover_url.isEmpty()) {
 			String url = DataService.SERVER_URL + child.cover_url;
